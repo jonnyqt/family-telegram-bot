@@ -1,25 +1,15 @@
-import os
-import openai
 from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-TELEGRAM_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN")
-OPENAI_KEY = os.environ.get("OPENAI_API_KEY")
-openai.api_key = OPENAI_KEY
+# Обработчик команды /start
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Привет! Я твой семейный бот!")
 
-# Минимальная функция для теста
-async def ask_openai(text):
-    return f"Получил сообщение: {text}"
+# Создаем приложение
+app = ApplicationBuilder().token("ВАШ_ТОКЕН_ТЕЛЕГРАМ").build()
 
-async def start(update: Update, context):
-    await update.message.reply_text("Привет! Я бот работает ✅")
-
-async def chat(update: Update, context):
-    reply = await ask_openai(update.message.text)
-    await update.message.reply_text(reply)
-
-app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
+# Регистрируем обработчик
 app.add_handler(CommandHandler("start", start))
-app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, chat))
 
+# Запуск бота
 app.run_polling()
